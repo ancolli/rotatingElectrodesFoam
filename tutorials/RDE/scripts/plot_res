@@ -1,0 +1,9 @@
+set term x11 persist
+set logscale y
+#set logscale x
+set ylabel 'Flux / mol/s/m^2'
+set xlabel "Iteration"
+set grid
+plot 	"< cat log.concentrationPimpleFoam | grep 'Average flux over cathode' 	| cut -d' ' -f6 | tr -d ','" every 1 with lines title 'flux over cathode'  
+pause 20
+reread

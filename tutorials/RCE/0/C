@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      C;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 -3 0 0 1 0 0];
+
+internalField   uniform 1;
+
+boundaryField
+{
+
+    ".*er"
+    {
+	type            zeroGradient;
+       
+    }
+    "cyclic.*"
+    {
+        type            cyclic;
+    } 
+
+    wall_cathode       
+    {
+        type            fixedValue;
+        value           uniform 0;  
+    } 
+    
+    wall_anode
+    {
+
+    type            codedMixed;
+    
+    refValue        uniform 0;
+    refGradient     uniform 0;
+    valueFraction   uniform 1;
+
+    name    mappedFlux;   // name of generated BC
+
+    code
+    #{
+        const fvPatch& p = this->patch();                                                                       // Actual boundary/patch
+    	label outletPatchID = p.patch().boundaryMesh().findPatchID("wall_cathode");                            // Desired patch ID
+        label anodePatchID = p.patch().boundaryMesh().findPatchID("wall_anode"); 
+    	const fvPatch& outletPatch = p.boundaryMesh()[outletPatchID];                                           // Desired patch
+    	
+        const volScalarField& flujo = this->db().objectRegistry::template lookupObject<volScalarField>("Flux");      // Desired field 1
+        const volScalarField& Dif = this->db().objectRegistry::template lookupObject<volScalarField>("Deff");   // Desired field 2
+    	const scalarField& outletPatchField = flujo.boundaryField()[outletPatchID];// Desired field on desired patch
+        const scalarField& Deffanode = Dif.boundaryField()[anodePatchID];// Desired field on desired patch
+        
+        scalar areaanode = gSum(patch().magSf());
+        scalar areacathode = gSum(outletPatch.magSf());
+        scalar averageOutletField = gSum(outletPatch.magSf()*outletPatchField)/areacathode;
+
+    
+        this->refValue() = 0;
+        this->refGrad() = averageOutletField*areacathode/areaanode/Deffanode;
+        this->valueFraction() = 0;   
+        
+    #};
+
+    
+    codeInclude
+    #{
+        #include "fvCFD.H"
+        #include "fvcSnGrad.H"
+    #};
+
+    codeOptions
+    #{
+        -I$(LIB_SRC)/finiteVolume/lnInclude \
+            -I$(LIB_SRC)/meshTools/lnInclude
+    #};
+   
+}
+
+// ************************************************************************* //

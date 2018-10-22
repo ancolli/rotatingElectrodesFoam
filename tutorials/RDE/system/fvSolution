@@ -1,0 +1,118 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+solvers
+{
+    p
+    {
+        solver          GAMG;
+        tolerance       1e-05;
+        relTol          0.05;
+        smoother        GaussSeidel;
+    }
+
+    pFinal
+    {
+        $p;
+        tolerance       5e-06;
+        relTol          0;
+    }
+
+    "U.*"
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-06;
+        relTol          0;
+	minIter         1;
+    }
+
+    "omega.*"
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-15;
+        relTol          0;
+	minIter         1;
+    }
+
+    "k.*"
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-10;
+        relTol          0;
+	minIter         1;
+    }
+
+    "C.*"
+    {
+        solver          PBiCGStab;//PBiCG;//
+        preconditioner  DILU;
+        tolerance       1e-07;
+        relTol          0;
+	minIter         1;
+    }
+
+
+}
+
+
+PIMPLE
+{
+	turbOnFinalIterOnly false;
+
+        consistent      yes; //SIMPLEC
+
+	nOuterCorrectors 75;
+	nCorrectors 1;
+	nNonOrthogonalCorrectors 0;
+
+	pRefCell        0;
+	pRefValue       0;
+
+    outerCorrectorResidualControl
+    {
+        U
+        {
+                tolerance  1e-5;
+                relTol      0;
+        }
+        p
+        {
+                tolerance  5e-4;
+                relTol      0;
+        }
+    }
+
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p      0.3;
+        pFinal   1;
+    }
+    equations
+    {
+        "U|k|omega"     0.85;
+        "(U|k|omega)Final"   1; 
+    }
+}
+
+
+// ************************************************************************* //
