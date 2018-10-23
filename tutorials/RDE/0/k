@@ -32,7 +32,7 @@ boundaryField
 
     "wall.*"
     {
-        type            kqRWallFunction;
+        type            kLowReWallFunction;
         value		$internalField;
     }
 
