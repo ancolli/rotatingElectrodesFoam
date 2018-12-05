@@ -24,7 +24,7 @@ boundaryField
     ".*er"
     {
 	type            zeroGradient;
-
+    }
     "wall.*"
     {
         type            zeroGradient;

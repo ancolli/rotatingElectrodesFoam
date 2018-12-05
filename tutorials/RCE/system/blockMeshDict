@@ -103,7 +103,7 @@ type wall;
 cyclic_front
 {
 	type cyclic;
-	neighbourPatch wedge_back;
+	neighbourPatch cyclic_back;
 	faces
 	(
 		(1 5 4 0)
@@ -113,7 +113,7 @@ cyclic_front
 cyclic_back
 {
 	type cyclic;
-	neighbourPatch wedge_front;
+	neighbourPatch cyclic_front;
 	faces
 	(
 		(2 3 7 6)

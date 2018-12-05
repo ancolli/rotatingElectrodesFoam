@@ -77,7 +77,7 @@ PIMPLE
 
         consistent      yes; //SIMPLEC
 
-	nOuterCorrectors 150;
+	nOuterCorrectors 75;
 	nCorrectors 1;
 	nNonOrthogonalCorrectors 0;
 
