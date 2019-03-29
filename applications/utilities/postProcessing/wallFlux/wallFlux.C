@@ -48,6 +48,7 @@ void Foam::functionObjects::wallFlux::writeFileHeader(const label i)
     writeTabbed(file(), "patch");
     writeTabbed(file(), "min");
     writeTabbed(file(), "max");
+    writeTabbed(file(), "average");
     writeTabbed(file(), "integral");
     file() << endl;
 }
