@@ -62,7 +62,7 @@ void Foam::functionObjects::wallFlux::calcFlux //void
 {
     surfaceScalarField flux
     (
-      fvc::interpolate(Deff_)*-fvc::snGrad(C_)
+      -fvc::interpolate(Deff_)*fvc::snGrad(C_)
     );
 
     volScalarField::Boundary& wallFluxBf =
@@ -278,7 +278,8 @@ bool Foam::functionObjects::wallFlux::write()
 
         const scalar minHfp = gMin(hfp);
         const scalar maxHfp = gMax(hfp);
-        const scalar integralHfp = gSum(magSf[patchi]*hfp)/gSum(magSf[patchi]);
+        const scalar average = gSum(magSf[patchi]*hfp)/gSum(magSf[patchi]);
+        const scalar integral = gSum(mag(magSf[patchi]*hfp)); //absolute value
 
         if (Pstream::master())
         {
@@ -287,12 +288,13 @@ bool Foam::functionObjects::wallFlux::write()
                 << tab << pp.name()
                 << tab << minHfp
                 << tab << maxHfp
-                << tab << integralHfp
+                << tab << average
+		<< tab << integral
                 << endl;
         }
 
-        Log << "    min/max/integ(" << pp.name() << ") = "
-            << minHfp << ", " << maxHfp << ", " << integralHfp << endl;
+        Log << "    min/max/average/integral(" << pp.name() << ") = "
+            << minHfp << ", " << maxHfp << ", " << average << ", " << integral << endl;
     }
 
     Log << endl;
