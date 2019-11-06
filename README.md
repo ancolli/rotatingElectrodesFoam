@@ -1,4 +1,7 @@
 # v1.0.0
+Cite as: International Journal of Heat and Mass Transfer 137 (2019) 835-846
+ (https://www.sciencedirect.com/science/article/pii/S0017931019304508) doi: 10.1016/j.ijheatmasstransfer.2019.03.152
+
 # rotatingElectrodesFoam
 It is described how to simulate current distribution in electrochemical reactors with rotating electrodes under mass-transfer controlled conditions, by the developed solver: concentrationPimpleFoam. It is shown how to pre-process, run and post-process a basic case involving a 2D axisimetric domain. 
 The proposed strategy allows to compute the wall share stress and flux of a single specie towards electrodes.
